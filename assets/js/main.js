@@ -1,3 +1,48 @@
+/* LRNZ — caricamento iniziale: le foto dei caroselli scorrono nel quadrato, poi il logo, poi si apre la home */
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var pl = document.querySelector(".preloader");
+  if (!pl || !root.classList.contains("is-loading")) { if (pl) pl.remove(); return; }
+
+  var STEP = 220;      // ms per ogni foto
+  var LOGO_HOLD = 750; // ms in cui resta il logo
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var imgEl = pl.querySelector(".pl-img");
+
+  var srcs = [];
+  document.querySelectorAll(".carousel-track img").forEach(function (im) {
+    var s = im.getAttribute("src"); if (srcs.indexOf(s) < 0) srcs.push(s);
+  });
+  var pics = srcs.map(function (s) { var i = new Image(); i.decoding = "async"; i.src = s; return i; });
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  window.scrollTo(0, 0);
+
+  function ready(i) { return pics[i].complete && pics[i].naturalWidth > 0; }
+  var start = Date.now(), idx = 0;
+
+  function next() {
+    if (idx >= pics.length || reduce) return finish();
+    // se la foto non è ancora arrivata aspetto un attimo (massimo 5 s in tutto)
+    if (!ready(idx) && Date.now() - start < 5000) { setTimeout(next, 60); return; }
+    imgEl.src = pics[idx].src; idx++;
+    setTimeout(next, STEP);
+  }
+  function finish() {
+    pl.classList.add("show-logo");
+    setTimeout(function () {
+      pl.classList.add("exit");
+      setTimeout(function () {
+        pl.classList.add("lift");
+        root.classList.remove("is-loading");
+        try { sessionStorage.setItem("lrnzIntro", "1"); } catch (e) {}
+        setTimeout(function () { pl.remove(); root.classList.remove("pl-anim"); }, 1400);
+      }, 650);
+    }, reduce ? 300 : LOGO_HOLD);
+  }
+  next();
+})();
+
 /* LRNZ — comportamenti della home */
 (function () {
   "use strict";

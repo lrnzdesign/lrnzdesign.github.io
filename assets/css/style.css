@@ -575,3 +575,46 @@ h1 { margin: 0; font-weight: 400; }
   .cursor-dot { display: none; }
   .has-cursor, .has-cursor * { cursor: auto !important; }
 }
+
+/* ---------- Caricamento iniziale (solo home, una volta per visita) ---------- */
+.preloader { display: none; }
+.is-loading { overflow: hidden; }
+.is-loading .preloader {
+  display: block; position: fixed; inset: 0; z-index: 9000;
+  background: var(--green-soft); color: #3a4c0d;
+  transition: transform .9s cubic-bezier(.76,0,.24,1);
+}
+.pl-text {
+  position: absolute; top: 50%; margin: 0;
+  font-family: var(--font-body); font-weight: 400; font-size: var(--fs-label); line-height: 1.17;
+  transform: translateY(-50%);
+}
+.pl-left { left: var(--gutter); }
+.pl-right { right: var(--gutter); text-align: right; }
+.pl-box {
+  position: absolute; left: 50%; top: 50%;
+  width: clamp(96px, 7.85vw, 140px); aspect-ratio: 1;
+  transform: translate(-50%, -50%); overflow: hidden;
+}
+.pl-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pl-logo { position: absolute; left: 10%; top: 50%; width: 80%; height: auto; transform: translateY(-50%); opacity: 0; }
+.preloader.show-logo .pl-img { opacity: 0; }
+.preloader.show-logo .pl-logo { opacity: 1; }
+/* uscita: logo e scritte salgono e spariscono, poi il verde si alza */
+.pl-text, .pl-box { transition: transform .7s cubic-bezier(.65,0,.35,1), opacity .5s ease; }
+.preloader.exit .pl-left  { transform: translateY(-50%) translateY(-60vh); opacity: 0; }
+.preloader.exit .pl-box   { transform: translate(-50%, -50%) translateY(-60vh); opacity: 0; transition-delay: .07s; }
+.preloader.exit .pl-right { transform: translateY(-50%) translateY(-60vh); opacity: 0; transition-delay: .14s; }
+.preloader.lift { transform: translateY(-100%); }
+/* la home entra dal basso mentre il verde si alza */
+.is-loading .hero-title, .is-loading .hero-meta { opacity: 0; transform: translateY(60px); }
+.pl-anim .hero-title, .pl-anim .hero-meta { transition: opacity .9s ease .25s, transform 1s cubic-bezier(.22,.61,.36,1) .2s; }
+.pl-anim .hero-meta { transition-delay: .35s; }
+
+@media (max-width: 760px) {
+  .pl-text { top: auto; transform: none; font-size: 16px; }
+  .pl-left { top: 22px; }
+  .pl-right { bottom: 22px; }
+  .pl-box { width: 30vw; }
+  .preloader.exit .pl-left, .preloader.exit .pl-right { transform: translateY(-60vh); }
+}
