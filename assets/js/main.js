@@ -5,7 +5,7 @@
   var pl = document.querySelector(".preloader");
   if (!pl || !root.classList.contains("is-loading")) { if (pl) pl.remove(); return; }
 
-  var STEP = 220;      // ms per ogni foto
+  var STEP = 120;      // ms per ogni foto
   var LOGO_HOLD = 750; // ms in cui resta il logo
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var imgEl = pl.querySelector(".pl-img");
